@@ -102,81 +102,54 @@ export class AuthService {
     };
   }
 
-  // async updatePassword(email: string, passDto: PassDto) {
-  //   const user = await this.usersService.findOneByEmail(email);
+  async updatePasswordEmail(email: string, passDto: PassEmailDto) {
+    const user = await this.usersService.findOneByEmail(email);
 
-  //   if (!user) {
-  //     throw new UnauthorizedException("Usuario no encontrado");
-  //   }
+    if (!user) {
+      throw new UnauthorizedException("Usuario no encontrado");
+    }
 
-  //   const isPasswordValid = await bcryptjs.compare(passDto.password, user.password);
+    if (passDto.password !== passDto.verPassword) {
+      throw new UnauthorizedException("Las contraseñas no coinciden");
+    }
 
-  //   if (!isPasswordValid) {
-  //     throw new UnauthorizedException("Contraseña actual incorrecta");
-  //   }
+    const hashedNewPassword = await bcryptjs.hash(passDto.password, 10);
 
-  //   const hashedNewPassword = await bcryptjs.hash(passDto.newPassword, 10);
+    await this.usersService.updatePasswordEmail(email, hashedNewPassword);
 
-  //   await this.usersService.updatePassword(email, hashedNewPassword);
+    const payload = { email: user.email, name: user.name };
 
-  //   const payload = { email: user.email, name: user.name };
+    const token = await this.jwtService.signAsync(payload);
 
-  //   const token = await this.jwtService.signAsync(payload);
+    return {
+      tokens: token,
+      name: user.name,
+      email: user.email,
+      message: "Contraseña actualizada correctamente",
+    };
+  }
 
-  //   return {
-  //     tokens: token,
-  //     message: "Contraseña actualizada correctamente",
-  //   };
-  // }
+  async registerEmail({ email }: EmailDto) {
 
-  // async updatePasswordEmail(email: string, passDto: PassEmailDto) {
-  //   const user = await this.usersService.findOneByEmail(email);
+    const user = await this.usersService.findOneByEmail(email);
 
-  //   if (!user) {
-  //     throw new UnauthorizedException("Usuario no encontrado");
-  //   }
+    if (!user) {
+      throw new BadRequestException("Correo electrónico no existe.");
+    }
 
-  //   if (passDto.password !== passDto.verPassword) {
-  //     throw new UnauthorizedException("Las contraseñas no coinciden");
-  //   }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
 
-  //   const hashedNewPassword = await bcryptjs.hash(passDto.password, 10);
+    if (!emailRegex.test(email)) {
+      throw new BadRequestException("Ingrese un correo válido.");
+    }
 
-  //   await this.usersService.updatePasswordEmail(email, hashedNewPassword);
+    let correo = "verificacion";
 
-  //   const payload = { email: user.email, name: user.name };
+    await this.envioEmail(user, email, correo);
 
-  //   const token = await this.jwtService.signAsync(payload);
+    return { message: "Correo electrónico enviado." };
 
-  //   return {
-  //     tokens: token,
-  //     name: user.name,
-  //     email: user.email,
-  //     message: "Contraseña actualizada correctamente",
-  //   };
-  // }
-
-  // async registerEmail({ email }: EmailDto) {
-
-  //   const user = await this.usersService.findOneByEmail(email);
-
-  //   if (!user) {
-  //     throw new BadRequestException("Correo electrónico no existe.");
-  //   }
-
-  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
-
-  //   if (!emailRegex.test(email)) {
-  //     throw new BadRequestException("Ingrese un correo válido.");
-  //   }
-
-  //   let correo = "verificacion";
-
-  //   await this.envioEmail(user, email, correo);
-
-  //   return { message: "Correo electrónico enviado." };
-
-  // }
+  }
 
   async envioEmail(user: any, email: string, correo: string) {
 
@@ -192,6 +165,11 @@ export class AuthService {
       filePath = path.resolve(process.cwd(), 'src/auth/html/plantillaReg.html');
     }
 
+    if (correo == "verificacion") {
+      url = `https://starkbook.netlify.app/starkbook-passwordupemail?token=${token}`;
+      filePath = path.resolve(process.cwd(), 'src/auth/html/plantilla.html');
+    }
+
     const htmlTemplate = fs.readFileSync(filePath, 'utf8');
     const personalizedHtml = htmlTemplate
       .replace('{{name}}', user.name)
@@ -204,21 +182,6 @@ export class AuthService {
     });
 
   }
-
-  // googleLogin(req) {
-  //   if (!req.user) {
-  //     return 'No user from google'
-  //   }
-  //   return {
-  //     message: 'User Info from Google',
-  //     user: req.user
-  //   }
-  // }
-
-  // async findAll() {
-  //   const users = await this.usersService.findAllUser();
-  //   return users;
-  // }
 
 }
 

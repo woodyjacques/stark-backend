@@ -24,33 +24,22 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  // @Patch('update-password')
-  // @UseGuards(AuthGuard)
-  // updatePassword(@Request() req, @Body() passDto: PassDto) {
-  //   return this.authService.updatePassword(req.user.email, passDto);
-  // }
+  @Post("email")
+  emailRegister(@Body() email: EmailDto) {
+    return this.authService.registerEmail(email);
+  }
 
-  // @Post("email")
-  // emailRegister(@Body() email: EmailDto) {
-  //   return this.authService.registerEmail(email);
-  // }
-
-  // @Patch('update-password-email')
-  // @UseGuards(AuthGuard)
-  // updatePasswordEmail(@Request() req, @Body() passDto: PassEmailDto) {
-  //   return this.authService.updatePasswordEmail(req.user.email, passDto);
-  // }
+  @Patch('update-password-email')
+  @UseGuards(AuthGuard)
+  updatePasswordEmail(@Request() req, @Body() passDto: PassEmailDto) {
+    return this.authService.updatePasswordEmail(req.user.email, passDto);
+  }
 
   @Patch('tokens-verifi')
   @UseGuards(AuthGuard)
   updateVerification(@Request() req, @Body() isVerified:boolean) {
     return this.authService.updateVerificacion(req.user.email, isVerified);
   }
-
-  // @Get("clients")
-  // findAll() {
-  //   return this.authService.findAll();
-  // }
 
 }
 
