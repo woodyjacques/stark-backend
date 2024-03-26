@@ -10,3 +10,11 @@ CREATE TABLE user_book (
     PRIMARY KEY (id),
     UNIQUE KEY email (email)
 );
+
+CREATE TABLE category_book  (
+    id int NOT NULL AUTO_INCREMENT,
+	name varchar(100) NOT NULL,
+	description text NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY name (name)
+);
