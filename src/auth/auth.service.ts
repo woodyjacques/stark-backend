@@ -22,6 +22,11 @@ export class AuthService {
     private readonly mailerService: MailerService
   ) { }
 
+  async findAll() {
+    const users = await this.usersService.findAllUser();
+    return users;
+  }
+
   async register({ password, email, name, isVerified }: RegisterDto) {
     const user = await this.usersService.findOneByEmail(email);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;

@@ -41,6 +41,11 @@ export class AuthController {
     return this.authService.updateVerificacion(req.user.email, isVerified);
   }
 
+  @Get("clients")
+  findAll() {
+    return this.authService.findAll();
+  }
+
 }
 
 
