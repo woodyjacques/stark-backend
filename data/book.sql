@@ -18,3 +18,16 @@ CREATE TABLE category_book  (
     PRIMARY KEY (id),
     UNIQUE KEY name (name)
 );
+
+CREATE TABLE stark_book  (
+    id int NOT NULL AUTO_INCREMENT,
+	name varchar(100) NOT NULL,
+	description text NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    linkCompra VARCHAR(255) NOT NULL,
+    linkLeer VARCHAR(255) NOT NULL,
+    linkEscuchar VARCHAR(255) NOT NULL,
+    linkImagen VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY name (name)
+);
