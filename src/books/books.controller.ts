@@ -9,7 +9,6 @@ import { ApiTags } from '@nestjs/swagger';
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
-  
   @Get()
   findAll() {
     return this.booksService.findAll();

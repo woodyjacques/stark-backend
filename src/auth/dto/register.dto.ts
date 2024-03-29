@@ -10,6 +10,9 @@ export class RegisterDto {
   email: string;
 
   @IsString()
+  telefono: string;
+
+  @IsString()
   @MinLength(6)
   @Transform(({ value }) => value.trim())
   password: string;

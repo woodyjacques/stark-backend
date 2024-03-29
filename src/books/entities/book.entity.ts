@@ -6,6 +6,8 @@ export class starkBook {
     @Column({ unique: true })
     name: string;
     @Column()
+    categories: string;
+    @Column()
     description: string;
     @Column()
     price: number;

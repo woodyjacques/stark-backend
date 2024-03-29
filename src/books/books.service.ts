@@ -4,6 +4,8 @@ import { starkBook } from './entities/book.entity';
 import { Repository } from 'typeorm';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
+import { UsersService } from 'src/users/users.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class BooksService {
@@ -11,6 +13,8 @@ export class BooksService {
   constructor(
     @InjectRepository(starkBook)
     private bookRepository: Repository<starkBook>,
+    private usersService:UsersService,
+    private authService:AuthService
   ) { }
 
   async findAll() {
@@ -30,8 +34,22 @@ export class BooksService {
 
   async create(createBookDto: CreateBookDto) {
     const newBook = this.bookRepository.create(createBookDto);
-    await this.bookRepository.save(newBook);
+    const creado = await this.bookRepository.save(newBook);
+    
+    if (creado) {
+      const emailes = await this.usersService.findAllEmails();
+      await this.enviarCorreos(emailes.emailes);
+    }
+
     return newBook;
+  }
+
+  async enviarCorreos(emailes: string[]) {
+    for (const email of emailes) {
+      const user = await this.usersService.findOneByEmail(email);
+      let correo = "books";
+      await this.authService.envioEmail(user, user.email, correo);
+    }
   }
 
   async update(id: number, updateBookDto: UpdateBookDto) {

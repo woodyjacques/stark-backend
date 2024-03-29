@@ -8,6 +8,8 @@ export class UserBook {
   name: string;
   @Column({ unique: true, nullable: false })
   email: string;
+  @Column({ length: 500 })
+  telefono: string;
   @Column({ nullable: false })
   password: string;
   @Column({ default: "user" })
