@@ -188,7 +188,7 @@ export class AuthService {
 
     await this.mailerService.sendMail({
       to: email,
-      subject: "Correo de verificación",
+      subject: "Correo de StarkBook",
       html: personalizedHtml,
     });
 
