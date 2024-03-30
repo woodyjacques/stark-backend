@@ -44,18 +44,16 @@ export class BooksService {
     return newBook;
   }
 
-  async enviarCorreos(emailes: string[]) {
-    for (const email of emailes) {
-      const user = await this.usersService.findOneByEmail(email);
-      let correo = "books";
-      await this.authService.envioEmail(user, user.email, correo);
-    }
-  }
-
   async update(id: number, updateBookDto: UpdateBookDto) {
     const existingBook = await this.findById(id);
     const updatedBook = { ...existingBook, ...updateBookDto };
-    await this.bookRepository.save(updatedBook);
+    const creado = await this.bookRepository.save(updatedBook);
+
+    if (creado) {
+      const emailes = await this.usersService.findAllEmails();
+      await this.enviarCorreos(emailes.emailes);
+    }
+
     return updatedBook;
   }
 
@@ -63,5 +61,13 @@ export class BooksService {
     const existingBook = await this.findById(id);
     await this.bookRepository.remove(existingBook);
     return existingBook;
+  }
+
+  async enviarCorreos(emailes: string[]) {
+    for (const email of emailes) {
+      const user = await this.usersService.findOneByEmail(email);
+      let correo = "books";
+      await this.authService.envioEmail(user, user.email, correo);
+    }
   }
 }
